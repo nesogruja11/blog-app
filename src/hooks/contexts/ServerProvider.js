@@ -8,7 +8,7 @@ export const useServer = () => {
 
 export function ServerProvider({children}) {
     const defaultServer = "127.0.0.1";
-    const defaultPort = "8088";
+    const defaultPort = "7264";
 
     const setItems = (server, port) => {
         localStorage.setItem('server-app', server);

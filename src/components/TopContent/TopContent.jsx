@@ -8,7 +8,7 @@ function TopContent(props){
     return(
         <>
           <div style={{marginTop:'5px', marginLeft:'5px'}}>
-          <Card sx={{ maxWidth: 450 }} style={{backgroundColor:'lightgrey'}}>
+          <Card sx={{ maxWidth: 700 }} style={{backgroundColor:'lightgrey'}}>
             <CardContent>
               <Typography gutterBottom variant="h4" component="div">
                 {props?.title}
