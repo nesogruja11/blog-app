@@ -8,6 +8,7 @@ import { ServerProvider } from './hooks/contexts/ServerProvider';
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import React from 'react';
+import AddBlog from './Pages/AddBlog/AddBlog';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +28,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />}></Route>
+              <Route path='/add-blog' element={<AddBlog/>}/>
               <Route exact path="/" element={<Home />}></Route>
             </Routes>
             <ToastContainer/>

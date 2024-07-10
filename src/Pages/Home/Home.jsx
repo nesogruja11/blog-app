@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddNewBlog from '../AddBlog/AddBlog.jsx';
 
 
 function Home(){
@@ -30,14 +31,10 @@ function Home(){
        setApprovedBlogs(approvedBlogsData);
     }, [approvedBlogsData]);
 
-
-    console.log(approvedBlogs);
-
-
     return(
         <>
             <ResponsiveAppBar/>
-            <Grid container spacing={2} style={{marginLeft:10, marginTop:10, marginBottom:10}}>
+            <Grid container spacing={2} sty>
                 <Grid item xs={3}>
                     <TextField id="outlined-basic" label="Pretraga po naslovu" variant="outlined" style={{width:300}}/>
                 </Grid>
