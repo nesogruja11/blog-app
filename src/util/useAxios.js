@@ -10,7 +10,7 @@ const req = axios.create({ baseURL: defaultServer });
 
 export const useRequest = () => {
   // var token = localStorage.getItem('token-app');
-  var token = `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEcmFnYW5hNSIsImlhdCI6ODY0MDAsImV4cCI6MTcyMDcwNDczNX0.gJEzmHxJPfAQjTcYC6h1UPGxY7n04Wg_ZjkkrYsEcgA`;
+  var token = `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEcmFnYW5hNSIsImlhdCI6ODY0MDAsImV4cCI6MTcyMTExMzUwMH0.cJLiGYX8seLHTDly8d7TzgsHlPc81lGOYMwmloUbChM`;
   if (token) {
     req.defaults.headers.common.Authorization = `Bearer ${token}`;
   }

@@ -12,14 +12,18 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCountries } from "../../hooks/services/useCountry";
 import { useAddBlog } from "../../hooks/services/useBlog";
 import { useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 const AddNewBlog = () => {
   const { data: countriesData } = useCountries();
+
   const [countries, setCountries] = useState("");
+  const [date, setDate] = useState(dayjs(""));
 
   const handleChange = (event) => {
     setCountries(event.target.value);
@@ -40,16 +44,29 @@ const AddNewBlog = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    //mutatePut(data);
-    console.log(data);
+    mutateAdd(data, {
+      onSuccess: () => toast.success("Uspjesno ste dodali blog!"),
+      onError: () =>
+        toast.error("Došlo je do greške prilikom dodavanja bloga!"),
+    });
   };
-  const buttonClick = () => {
-    console.log("click");
-  };
+
+  // useUpdateEffect(() => {
+  //   if (isSuccessAdd) {
+  //     toast.success("Uspjesno ste dodali blog!");
+  //   }
+  //   if (isErrorAdd) {
+  //     toast.error("Došlo je do greške prilikom dodavanja bloga!");
+  //   }
+  // }, [isSuccessAdd, isErrorAdd]);
+
+  useEffect(() => {
+    setValue("travelDate", date);
+  }, [date]);
 
   return (
     <div>
-      <ResponsiveAppBar></ResponsiveAppBar>
+      <ResponsiveAppBar />
       <div
         style={{
           height: "calc(100vh - 70px)",
@@ -63,89 +80,92 @@ const AddNewBlog = () => {
         <Typography marginLeft="20px" marginTop="30px" variant="h4">
           Novi blog
         </Typography>
-        <Grid container columns={2} rowSpacing={3} sx={{ width: "500px" }}>
-          <Grid item xs={1}>
-            Naslov
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container columns={2} rowSpacing={3} sx={{ width: "500px" }}>
+            <Grid item xs={1}>
+              Naslov
+            </Grid>
+            <Grid item xs={1}>
+              <TextField
+                {...register("blogTitle")}
+                style={{ width: "100%" }}
+                placeholder="Naslov"
+                size="small"
+              ></TextField>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography>Država</Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Select
+                {...register("countryId")}
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={countries}
+                label="Country"
+                onChange={handleChange}
+                fullWidth
+                size="small"
+              >
+                {countriesData?.map((country) => (
+                  <MenuItem value={country.countryId} key={country.countryId}>
+                    {country.countryName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item xs={1}>
+              Datum putovanja
+            </Grid>
+            <Grid item xs={1}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DatePicker"]}>
+                  <DatePicker
+                    value={date}
+                    onChange={(newValue) => setDate(newValue)}
+                    //  {...register("travelDate")}
+                    label="Izaberite datum"
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={1}>
+              Naslovna slika
+            </Grid>
+            <Grid item xs={1}>
+              <TextField
+                {...register("coverImageUrl")}
+                style={{ width: "100%" }}
+                placeholder="link"
+                size="small"
+              ></TextField>
+            </Grid>
+            <Grid item xs={1}>
+              Sadržaj
+            </Grid>
+            <Grid item xs={2}>
+              <TextareaAutosize
+                {...register("blogContent")}
+                style={{ width: 500, height: 100, marginTop: 10 }}
+              ></TextareaAutosize>{" "}
+            </Grid>
+            <Grid item justifyContent={"center"} alignItems={"center"}>
+              <Button
+                xs={2}
+                type="submit"
+                style={{
+                  color: "black",
+                  border: "black",
+                  background: "lightgray",
+                  borderRadius: 10,
+                  width: 100,
+                }}
+              >
+                Sačuvaj
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={1}>
-            <TextField
-              {...register("blogTitle")}
-              style={{ width: "100%" }}
-              placeholder="Naslov"
-              size="small"
-            ></TextField>
-          </Grid>
-          <Grid item xs={1}>
-            <Typography>Država</Typography>
-          </Grid>
-          <Grid item xs={1}>
-            <Select
-              {...register("countryId")}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={countries}
-              label="Country"
-              onChange={handleChange}
-              fullWidth
-              size="small"
-            >
-              {countriesData?.map((country) => (
-                <MenuItem value={country.countryId} key={country.countryId}>
-                  {country.countryName}
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
-          <Grid item xs={1}>
-            Datum putovanja
-          </Grid>
-          <Grid item xs={1}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["DatePicker"]}>
-                <DatePicker
-                  {...register("travelDate")}
-                  label="Izaberite datum"
-                />
-              </DemoContainer>
-            </LocalizationProvider>
-          </Grid>
-          <Grid item xs={1}>
-            Naslovna slika
-          </Grid>
-          <Grid item xs={1}>
-            <TextField
-              {...register("coverImageUrl")}
-              style={{ width: "100%" }}
-              placeholder="link"
-              size="small"
-            ></TextField>
-          </Grid>
-          <Grid item xs={1}>
-            Sadržaj
-          </Grid>
-          <Grid item xs={2}>
-            <TextareaAutosize
-              {...register("blogContent")}
-              style={{ width: 500, height: 100, marginTop: 10 }}
-            ></TextareaAutosize>{" "}
-          </Grid>
-          <Grid item justifyContent={"center"} alignItems={"center"}>
-            <Button
-              item
-              onClick={buttonClick}
-              xs={2}
-              style={{
-                color: "black",
-                border: "black",
-                background: "lightgray",
-                borderRadius: 10,
-                width: 100,
-              }}
-            >
-              Sačuvaj
-            </Button>
-          </Grid>
-        </Grid>
+        </form>
       </div>
     </div>
   );
