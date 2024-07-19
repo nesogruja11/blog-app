@@ -23,7 +23,7 @@ const AddNewBlog = () => {
   const { data: countriesData } = useCountries();
 
   const [countries, setCountries] = useState("");
-  const [date, setDate] = useState(dayjs(""));
+  const [date, setDate] = useState(dayjs());
 
   const handleChange = (event) => {
     setCountries(event.target.value);
@@ -50,15 +50,6 @@ const AddNewBlog = () => {
         toast.error("Došlo je do greške prilikom dodavanja bloga!"),
     });
   };
-
-  // useUpdateEffect(() => {
-  //   if (isSuccessAdd) {
-  //     toast.success("Uspjesno ste dodali blog!");
-  //   }
-  //   if (isErrorAdd) {
-  //     toast.error("Došlo je do greške prilikom dodavanja bloga!");
-  //   }
-  // }, [isSuccessAdd, isErrorAdd]);
 
   useEffect(() => {
     setValue("travelDate", date);
@@ -123,7 +114,7 @@ const AddNewBlog = () => {
                   <DatePicker
                     value={date}
                     onChange={(newValue) => setDate(newValue)}
-                    //  {...register("travelDate")}
+                    {...register("travelDate")}
                     label="Izaberite datum"
                   />
                 </DemoContainer>
@@ -159,6 +150,7 @@ const AddNewBlog = () => {
                   background: "lightgray",
                   borderRadius: 10,
                   width: 100,
+                  marginLeft: 400,
                 }}
               >
                 Sačuvaj

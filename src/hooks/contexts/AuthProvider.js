@@ -43,16 +43,27 @@ export function AuthProvider({ children }) {
     }
   };
 
-
   // use for accesing some route
   const canAccessUserRoute = () => {
     return checkIfUserIsInRole(UserRoles.ADMIN);
   };
 
-
   const logout = () => {
     clearToken();
     window.location.reload(true);
+  };
+
+  const isTokenExpired = () => {
+    if (token) {
+      let decodedToken = decode(token);
+      let expiredDate = new Date(decodedToken.exp * 1000);
+      let currentDate = new Date();
+      if (expiredDate < currentDate) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   };
 
   const value = {
@@ -71,5 +82,5 @@ export function AuthProvider({ children }) {
 
 export const UserRoles = {
   ADMIN: "ADMIN",
-  USER:  "USER"
+  USER: "USER",
 };
