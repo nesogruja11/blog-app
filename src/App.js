@@ -1,13 +1,15 @@
-import './App.css';
-import Home from './Pages/Home/Home';
-import Login from './Pages/Login/Login';
+import React from "react";
+import "./App.css";
+import Home from "./Pages/Home/Home";
+import Login from "./Pages/Login/Login";
 import { Routes, BrowserRouter, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { AuthProvider } from './hooks/contexts/AuthProvider';
-import { ServerProvider } from './hooks/contexts/ServerProvider';
+import { AuthProvider } from "./hooks/contexts/AuthProvider";
+import { ServerProvider } from "./hooks/contexts/ServerProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import React from 'react';
+import AddBlog from "./Pages/AddBlog/AddBlog";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,15 +23,16 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false}/>
+      <ReactQueryDevtools initialIsOpen={false} />
       <ServerProvider>
         <AuthProvider>
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />}></Route>
+              <Route path="/add-blog" element={<AddBlog />} />
               <Route exact path="/" element={<Home />}></Route>
             </Routes>
-            <ToastContainer/>
+            <ToastContainer />
           </BrowserRouter>
         </AuthProvider>
       </ServerProvider>
