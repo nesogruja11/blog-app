@@ -7,7 +7,6 @@ import TopContent from "../../components/TopContent/TopContent.jsx";
 // import { useApprovedBlogs } from "../../hooks/services/useBlog.js";
 import { useState, useEffect } from "react";
 import { List, TextField, Typography } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
@@ -32,13 +31,28 @@ function Home() {
   const { data: topUsersData } = useTopFiveUsers();
   const [topFiveUsers, setTopFiveUsers] = useState([]);
 
+  const { data: allBlogsData } = useBlogs();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchedBlog, setSearchedBlog] = useState([]);
+
+  const handleSearch = () => {
+    if (searchTerm.trim() === "") {
+      setSearchedBlog(allBlogsData);
+    } else {
+      const foundBlogs = (allBlogsData || []).filter((blog) =>
+        blog.blogTitle.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchedBlog(foundBlogs ? foundBlogs : []);
+    }
+  };
+
+  useEffect(() => {
+    setSearchedBlog(allBlogsData);
+  }, [allBlogsData]);
+
   const handleChange = (event) => {
     setCountries(event.target.value);
   };
-
-  //   useEffect(() => {
-  //     setApprovedBlogs(approvedBlogsData);
-  //   }, [approvedBlogsData]);
 
   useEffect(() => {
     if (topBlogsData) {
@@ -62,6 +76,8 @@ function Home() {
             label="Pretraga po naslovu"
             variant="outlined"
             style={{ width: 300 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Grid>
         <Grid item marginTop={5} marginBottom={5} xs={3}>
@@ -91,7 +107,11 @@ function Home() {
           </Select>
         </Grid>
         <Grid item marginTop={7} marginBottom={5} xs={3}>
-          <Button variant="contained" endIcon={<SearchIcon />}>
+          <Button
+            variant="contained"
+            endIcon={<SearchIcon />}
+            onClick={handleSearch}
+          >
             Traži
           </Button>
         </Grid>
@@ -106,7 +126,10 @@ function Home() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={7} marginLeft={5}>
-            <BlogCard />
+            {searchedBlog &&
+              searchedBlog?.map((blog) => (
+                <BlogCard key={blog.blogId} blog={blog} />
+              ))}
           </Grid>
           <Grid item xs={4}>
             <TopContent
