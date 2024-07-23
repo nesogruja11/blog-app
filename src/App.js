@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import AddBlog from "./Pages/AddBlog/AddBlog";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ApproveBlog from "./Pages/ApproveBlog/ApproveBlog";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,7 @@ function App() {
               <Route path="/login" element={<Login />}></Route>
               <Route path="/add-blog" element={<AddBlog />} />
               <Route exact path="/" element={<Home />}></Route>
+              <Route path="/approve-blog" element={<ApproveBlog />} />
             </Routes>
             <ToastContainer />
           </BrowserRouter>
