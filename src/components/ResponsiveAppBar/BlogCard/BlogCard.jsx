@@ -10,13 +10,51 @@ import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import { useEffect, useState } from "react";
+import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
+
+import { useApproveBlog } from "../../../hooks/services/useBlog";
+import { toast } from "react-toastify";
 
 function BlogCard(props) {
   const [blog, setBlog] = useState();
 
+  const [checked, setChecked] = useState(props.blog?.approved);
+  //const { mutateAsync: approveBlogMutation } = useApproveBlog();
+  const { mutate: mutateApprove } = useApproveBlog();
+
+  const onSubmit = (id) => {
+    mutateApprove(blog?.blogId, {
+      onSuccess: () => toast.success("Blog je odobren!"),
+      onError: () =>
+        toast.error("Došlo je do greške prilikom odobravanja bloga!"),
+    });
+  };
+
+  useEffect(() => {
+    setBlog(props.blog);
+    setChecked(props.blog?.approved);
+  }, [props.blog]);
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
+  /*const handleApproveClick = async () => {
+    try {
+      await approveBlogMutation(blog?.blogId);
+      setChecked(true);
+    } catch (error) {
+      console.error("Greška prilikom odobravanja bloga:", error);
+    }
+  };*/
+
   useEffect(() => {
     if (props.blog) setBlog(props.blog);
   }, [props.blog]);
+
+  const { showCheckbox } = props;
 
   return (
     <>
@@ -54,6 +92,7 @@ function BlogCard(props) {
             image={blog?.coverImageUrl}
             alt="Blog"
           />
+
           <CardContent>
             <Typography variant="body2" color="text.secondary">
               {blog?.blogContent}
@@ -65,6 +104,38 @@ function BlogCard(props) {
               <ShareIcon />
             </IconButton>
           </CardContent>
+          {showCheckbox && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              marginRight={2}
+              marginBottom={1}
+            >
+              <Box display="flex" alignItems="center" justifyContent="flex-end">
+                <Checkbox checked={checked} onChange={handleCheckboxChange} />
+                <Typography variant="body1" color="black" marginLeft={1}>
+                  Odobri
+                </Typography>
+              </Box>
+
+              <Box display="flex" justifyContent="flex-end" marginTop={1}>
+                <Button
+                  type="submit"
+                  onClick={onSubmit}
+                  //onClick={handleApproveClick}
+                  sx={{
+                    backgroundColor: "transparent",
+                    color: "black",
+                    borderRadius: "10px",
+                    border: "1px solid black",
+                    marginLeft: "auto",
+                  }}
+                >
+                  Sacuvaj
+                </Button>
+              </Box>
+            </Box>
+          )}
         </Card>
       </div>
     </>
