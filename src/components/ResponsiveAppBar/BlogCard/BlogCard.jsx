@@ -13,16 +13,24 @@ import { useEffect, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
-
 import { useApproveBlog } from "../../../hooks/services/useBlog";
 import { toast } from "react-toastify";
+import { useAddFavouriteBlog } from "../../../hooks/services/useBlog";
 
 function BlogCard(props) {
   const [blog, setBlog] = useState();
-
+  const { showCheckbox } = props;
   const [checked, setChecked] = useState(props.blog?.approved);
-  //const { mutateAsync: approveBlogMutation } = useApproveBlog();
   const { mutate: mutateApprove } = useApproveBlog();
+  const { mutate: mutateAddFavouriteBlog } = useAddFavouriteBlog();
+
+  const onSubmit1 = (id) => {
+    mutateAddFavouriteBlog(blog?.blogId, {
+      onSuccess: () => toast.success("Blog je dodat u omiljene!"),
+      onError: () =>
+        toast.error("Došlo je do greške prilikom dodavanja bloga u omiljene!"),
+    });
+  };
 
   const onSubmit = (id) => {
     mutateApprove(blog?.blogId, {
@@ -33,28 +41,15 @@ function BlogCard(props) {
   };
 
   useEffect(() => {
-    setBlog(props.blog);
-    setChecked(props.blog?.approved);
+    if (props.blog) {
+      setBlog(props.blog);
+      setChecked(props.blog?.approved);
+    }
   }, [props.blog]);
 
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
-
-  /*const handleApproveClick = async () => {
-    try {
-      await approveBlogMutation(blog?.blogId);
-      setChecked(true);
-    } catch (error) {
-      console.error("Greška prilikom odobravanja bloga:", error);
-    }
-  };*/
-
-  useEffect(() => {
-    if (props.blog) setBlog(props.blog);
-  }, [props.blog]);
-
-  const { showCheckbox } = props;
 
   return (
     <>
@@ -82,7 +77,7 @@ function BlogCard(props) {
                 <br />
                 Autor: {blog?.user.username}
                 <br />
-                Država: {blog?.country.countryName}
+                Država:{blog?.country?.countryName}
               </>
             }
           />
@@ -97,7 +92,7 @@ function BlogCard(props) {
             <Typography variant="body2" color="text.secondary">
               {blog?.blogContent}
             </Typography>
-            <IconButton aria-label="add to favorites">
+            <IconButton onClick={onSubmit1} aria-label="add to favorites">
               <FavoriteIcon />
             </IconButton>
             <IconButton aria-label="share">
