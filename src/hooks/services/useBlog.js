@@ -3,6 +3,7 @@ import {
   useQuery,
   useQueryClient,
   QueryClient,
+  Query,
 } from "react-query";
 import axios from "axios";
 import { DEFAULT_SERVER } from "../../util/const-util";
@@ -18,12 +19,24 @@ export const useBlogs = () => {
 export const useUnapprovedBlogs = () => {
   return useQuery(["unapproved-blogs"], async () => getUnapprovedBlogs());
 };
+export const useFavouriteBlogs = () => {
+  return useQuery(["favourite-blogs"], async () => getFavouriteBlogs());
+};
 
 export const useApproveBlog = () => {
   const queryClient = new QueryClient();
   return useMutation(approveBlog, {
     onSuccess: () => {
       queryClient.invalidateQueries("approved-blogs");
+    },
+  });
+};
+
+export const useAddFavouriteBlog = () => {
+  const queryClient = new QueryClient();
+  return useMutation(favouriteBlog, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favourite-blog");
     },
   });
 };
@@ -59,9 +72,26 @@ const getUnapprovedBlogs = async () => {
   return result.data;
 };
 
+export const getFavouriteBlogs = async () => {
+  const request = useRequest();
+  const result = await request({
+    url: "/blog/allFavouritesBlogs",
+    method: "get",
+  });
+  return result.data;
+};
+
 const approveBlog = (id) => {
   const request = useRequest();
   return request({ url: `/blog/approve?blogId=${id}`, method: "get" });
+};
+
+const favouriteBlog = (id) => {
+  const request = useRequest();
+  return request({
+    url: `/blog/saveFavouriteBlog?blogId=${id}`,
+    method: "get",
+  });
 };
 
 const getTopFiveBlogs = async () => {

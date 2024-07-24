@@ -11,6 +11,8 @@ import AddBlog from "./Pages/AddBlog/AddBlog";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ApproveBlog from "./Pages/ApproveBlog/ApproveBlog";
+import FavouriteBlogs from "./Pages/FavouriteBlogs/FavouriteBlogs";
+import BlogDetails from "./Pages/BlogDetails/BlogDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,6 +35,8 @@ function App() {
               <Route path="/add-blog" element={<AddBlog />} />
               <Route exact path="/" element={<Home />}></Route>
               <Route path="/approve-blog" element={<ApproveBlog />} />
+              <Route path="/favourite-blogs" element={<FavouriteBlogs />} />
+              <Route path="blog-details" element={<BlogDetails />} />
             </Routes>
             <ToastContainer />
           </BrowserRouter>
