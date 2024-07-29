@@ -16,6 +16,7 @@ import { Button } from "@mui/material";
 import { useApproveBlog } from "../../../hooks/services/useBlog";
 import { toast } from "react-toastify";
 import { useAddFavouriteBlog } from "../../../hooks/services/useBlog";
+import { Link } from "react-router-dom";
 
 function BlogCard(props) {
   const [blog, setBlog] = useState();
@@ -23,6 +24,7 @@ function BlogCard(props) {
   const [checked, setChecked] = useState(props.blog?.approved);
   const { mutate: mutateApprove } = useApproveBlog();
   const { mutate: mutateAddFavouriteBlog } = useAddFavouriteBlog();
+  const [blogId, setBlogId] = useState(null);
 
   const onSubmit1 = (id) => {
     mutateAddFavouriteBlog(blog?.blogId, {
@@ -44,6 +46,7 @@ function BlogCard(props) {
     if (props.blog) {
       setBlog(props.blog);
       setChecked(props.blog?.approved);
+      setBlogId(props.blog?.blogId);
     }
   }, [props.blog]);
 
@@ -70,7 +73,19 @@ function BlogCard(props) {
                 {blog?.user.username.charAt(0)}
               </Avatar>
             }
-            title={blog?.blogTitle}
+            title={
+              <Link
+                to={`/blog-details/${blogId}`}
+                style={{
+                  textDecoration: "underline",
+                  color: "light-blue",
+                  fontSize: "20px",
+                }}
+              >
+                {blog?.blogTitle}
+              </Link>
+            }
+            // title={blog?.blogTitle}
             subheader={
               <>
                 {blog?.createdAt}

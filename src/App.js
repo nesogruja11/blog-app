@@ -36,7 +36,7 @@ function App() {
               <Route exact path="/" element={<Home />}></Route>
               <Route path="/approve-blog" element={<ApproveBlog />} />
               <Route path="/favourite-blogs" element={<FavouriteBlogs />} />
-              <Route path="blog-details" element={<BlogDetails />} />
+              <Route path="/blog-details/:blogId" element={<BlogDetails />} />
             </Routes>
             <ToastContainer />
           </BrowserRouter>
