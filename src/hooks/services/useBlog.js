@@ -86,6 +86,11 @@ const approveBlog = (id) => {
   return request({ url: `/blog/approve?blogId=${id}`, method: "get" });
 };
 
+export const getBlog = (id) => {
+  const request = useRequest();
+  return request({ url: `/blog/findById?blogId=${id}`, method: "get" });
+};
+
 const favouriteBlog = (id) => {
   const request = useRequest();
   return request({

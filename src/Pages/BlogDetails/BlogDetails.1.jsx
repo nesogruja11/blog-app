@@ -7,19 +7,12 @@ import {
   Typography,
   ImageList,
   ImageListItem,
-  Input,
 } from "@mui/material";
-
 import { getBlog } from "../../hooks/services/useBlog";
 import { useParams } from "react-router-dom";
 import { getPictures } from "../../hooks/services/usePicture";
-import { getComments, useAddComment } from "../../hooks/services/useComment";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-//import { useAddPicture } from "../../hooks/services/usePicture";
 
-const BlogDetails = () => {
+export const BlogDetails = () => {
   const [blog, setBlog] = useState(null);
   let { blogId } = useParams();
   const [blogTitle, setBlogTitle] = useState("");
@@ -28,53 +21,18 @@ const BlogDetails = () => {
   const [country, setCountry] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [blogContent, setBlogContent] = useState("");
-  const [pictures, setPictures] = useState("");
-  const [comments, setComments] = useState("");
-  const { mutate: mutateAdd } = useAddComment();
-  const { handleSubmit, register, reset } = useForm();
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  //const { mutate: mutateAddPicture } = useAddPicture();
-
-  const onSubmit = (data) => {
-    const commentData = {
-      ...data,
-      blogId: blogId,
-    };
-    const newComment = {
-      commentId: Math.random(),
-      commentContent: data.commentContent,
-    };
-    reset();
-    setComments([...comments, newComment]);
-    mutateAdd(commentData, {
-      onSuccess: () => toast.success("Uspjesno ste dodali komentar!"),
-      onError: () =>
-        toast.error("Došlo je do greške prilikom komentarisanja bloga!"),
-    });
-  };
+  const [pictures, setPictures] = useState([]);
 
   useEffect(() => {
     if (blogId) {
       getBlog(blogId).then((result) => {
         setBlog(result.data);
       });
-    }
-  }, [blogId]);
-
-  useEffect(() => {
-    if (blogId) {
       getPictures(blogId).then((result) => {
-        setPictures(result.data);
-      });
-    }
-  }, [blogId]);
-
-  useEffect(() => {
-    if (blogId) {
-      getComments(blogId).then((result) => {
         console.log(result);
-        setComments(result.data);
+        if (Array.isArray(result)) {
+          setPictures(result.data);
+        }
       });
     }
   }, [blogId]);
@@ -95,19 +53,11 @@ const BlogDetails = () => {
         img: picture.pictureUrl,
       }))
     : [];
-
   return (
     <>
       <ResponsiveAppBar />
 
-      <Grid
-        container
-        marginLeft={10}
-        width={800}
-        marginTop={5}
-        spacing={3}
-        style={{ margin: "auto" }}
-      >
+      <Grid container marginLeft={10} width={800} marginTop={5} spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h2">{blogTitle}</Typography>
         </Grid>
@@ -137,13 +87,13 @@ const BlogDetails = () => {
         <Grid item xs={12}>
           <ImageList sx={{ width: 600, height: 600 }} cols={3}>
             {itemData &&
-              itemData.map((item, index) => (
-                <ImageListItem key={`${item.img}-${index}`}>
+              itemData.map((item) => (
+                <ImageListItem key={item.img}>
                   <img
-                    srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                    src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                    // srcSet={`${item.img}`}
-                    //src={`${item.img}`}
+                    /**srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                    src={`${item.img}?w=164&h=164&fit=crop&auto=format`}*/
+                    srcSet={`${item.img}`}
+                    src={`${item.img}`}
                     alt="Slika"
                     loading="lazy"
                   />
@@ -167,55 +117,41 @@ const BlogDetails = () => {
               borderRadius: "30px",
             }}
           >
-            Dodaj slike
+            Dodaj sliku
           </Button>
         </Grid>
 
         <Grid item xs={12}>
-          {comments &&
-            comments.map((comment) => (
-              <textarea
-                key={comment.commentId}
-                style={{
-                  width: "600px",
-                  height: "50px",
-                  resize: "none",
-                }}
-                defaultValue={comment.commentContent}
-              ></textarea>
-            ))}
+          <textarea
+            style={{
+              width: "600px",
+              height: "50px",
+            }}
+          ></textarea>
         </Grid>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid item xs={12} marginLeft={3}>
-            <textarea
-              {...register("commentContent")}
-              placeholder="Unesite komentar..."
-              style={{
-                width: "600px",
-                height: "50px",
-                resize: "none",
-              }}
-            ></textarea>
-          </Grid>
-          <Grid item>
-            <Button
-              type="submit"
-              style={{
-                marginTop: "10px",
-                marginLeft: "550px",
-                background: "#f0f0f0",
-                border: "solid 1px black",
-                color: "black",
-                borderRadius: "30px",
-              }}
-            >
-              Pošalji
-            </Button>
-          </Grid>
-        </form>
+        <Grid item xs={12}>
+          <textarea
+            placeholder="Unesite komentar..."
+            style={{
+              width: "600px",
+              height: "50px",
+            }}
+          ></textarea>
+        </Grid>
+        <Grid item>
+          <Button
+            style={{
+              marginLeft: "530px",
+              background: "#f0f0f0",
+              border: "solid 1px black",
+              color: "black",
+              borderRadius: "30px",
+            }}
+          >
+            Pošalji
+          </Button>
+        </Grid>
       </Grid>
     </>
   );
 };
-
-export default BlogDetails;
