@@ -7,17 +7,16 @@ import {
   Typography,
   ImageList,
   ImageListItem,
-  Input,
+  Modal,
+  Box,
 } from "@mui/material";
-
 import { getBlog } from "../../hooks/services/useBlog";
 import { useParams } from "react-router-dom";
 import { getPictures } from "../../hooks/services/usePicture";
 import { getComments, useAddComment } from "../../hooks/services/useComment";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-//import { useAddPicture } from "../../hooks/services/usePicture";
+import { useAddPicture } from "../../hooks/services/usePicture";
 
 const BlogDetails = () => {
   const [blog, setBlog] = useState(null);
@@ -32,9 +31,52 @@ const BlogDetails = () => {
   const [comments, setComments] = useState("");
   const { mutate: mutateAdd } = useAddComment();
   const { handleSubmit, register, reset } = useForm();
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const { mutate: mutateAddPicture } = useAddPicture();
 
-  //const { mutate: mutateAddPicture } = useAddPicture();
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    reset();
+  };
+
+  const onSubmitPicture = (data) => {
+    const pictureURLsArray = data.pictureURLs
+      .split("\n")
+      .map((url) => url.trim())
+      .filter((url) => url !== "");
+    if (!blogId || blogId === "0") {
+      toast.error("Nije pronađen blog.");
+      return;
+    }
+    if (pictureURLsArray.length === 0) {
+      toast.error("Nema validnih URL-ova slika.");
+      return;
+    }
+
+    const requestData = {
+      blogId: blogId,
+      pictureURLs: pictureURLsArray,
+    };
+    console.log(requestData);
+    mutateAddPicture(requestData, {
+      onSuccess: () => {
+        toast.success("Uspješno ste dodali sliku!");
+        handleCloseModal();
+        getPictures(blogId).then((result) => {
+          setPictures(result.data);
+        });
+      },
+      onError: (error) => {
+        console.error("Greška prilikom dodavanja slika:", error);
+        toast.error("Došlo je do greške prilikom dodavanja slike!");
+        handleCloseModal();
+      },
+    });
+  };
 
   const onSubmit = (data) => {
     const commentData = {
@@ -73,7 +115,6 @@ const BlogDetails = () => {
   useEffect(() => {
     if (blogId) {
       getComments(blogId).then((result) => {
-        console.log(result);
         setComments(result.data);
       });
     }
@@ -95,6 +136,68 @@ const BlogDetails = () => {
         img: picture.pictureUrl,
       }))
     : [];
+
+  const modalBody = (
+    <Modal
+      open={openModal}
+      onClose={handleCloseModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "90%", // Promeni width kako bi bio responzivniji
+          maxWidth: 400,
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+          margin: "auto",
+        }}
+      >
+        <Button
+          sx={{ alignSelf: "flex-end", color: "red", borderRadius: "20px" }}
+          onClick={handleCloseModal}
+        >
+          X
+        </Button>
+        <Typography id="modal-modal-description" sx={{ mt: 2, color: "red" }}>
+          Unesite URL slike
+        </Typography>
+        <form
+          onSubmit={handleSubmit(onSubmitPicture)}
+          style={{ width: "100%" }}
+        >
+          <textarea
+            {...register("pictureURLs")}
+            name="pictureURLs"
+            style={{
+              width: "100%",
+              height: "60px",
+              resize: "none",
+              borderColor: "black",
+              marginBottom: "1rem",
+            }}
+          ></textarea>
+          <Button
+            type="submit"
+            sx={{ color: "red", borderRadius: "20px", width: "100%" }}
+          >
+            Sačuvaj
+          </Button>
+        </form>
+      </Box>
+    </Modal>
+  );
 
   return (
     <>
@@ -159,6 +262,7 @@ const BlogDetails = () => {
 
         <Grid item marginLeft={45}>
           <Button
+            onClick={handleOpenModal}
             style={{
               marginTop: "15px",
               background: "#f0f0f0",
@@ -169,6 +273,7 @@ const BlogDetails = () => {
           >
             Dodaj slike
           </Button>
+          {modalBody}
         </Grid>
 
         <Grid item xs={12}>
