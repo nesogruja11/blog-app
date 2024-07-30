@@ -14,7 +14,12 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link } from "react-router-dom";
 
-const pages = ["Početna", "Omiljeni", "Odobravanje", "Korisnici"];
+const pages = [
+  { label: "Početna", path: "/" },
+  { label: "Omiljeni", path: "/favourite-blogs" },
+  { label: "Odobravanje", path: "/approve-blog" },
+  { label: "Korisnici", path: "/users" },
+];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
@@ -24,8 +29,8 @@ function ResponsiveAppBar() {
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (nav) => {
-    console.log(nav);
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
@@ -89,8 +94,13 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} component={Link} to={"/login"}>
-                  <Typography textAlign="center"></Typography>
+                <MenuItem
+                  key={page.label}
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  to={page.path}
+                >
+                  <Typography textAlign="center">{page.label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -117,11 +127,13 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.label}
                 onClick={handleCloseNavMenu}
+                component={Link}
+                to={page.path}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {page.label}
               </Button>
             ))}
           </Box>
@@ -152,7 +164,7 @@ function ResponsiveAppBar() {
                 <MenuItem
                   key={setting}
                   onClick={() => {
-                    handleOpenUserMenu("/about");
+                    handleOpenUserMenu();
                   }}
                 >
                   <Typography textAlign="center">{setting}</Typography>
@@ -165,4 +177,5 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
+
 export default ResponsiveAppBar;
