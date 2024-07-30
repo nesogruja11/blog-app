@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useTopFiveBlogs } from "../../hooks/services/useBlog";
 import { useTopFiveUsers } from "../../hooks/services/useAuthentication.js";
 import { useBlogs } from "../../hooks/services/useBlog";
+import Pagination from "@mui/material/Pagination";
 
 function Home() {
   const [countries, setCountries] = useState("");
@@ -29,6 +30,9 @@ function Home() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [blogsPerPage] = useState(5);
 
   const filterBlogs = () => {
     if (!allBlogsData) return;
@@ -76,6 +80,10 @@ function Home() {
       setTopFiveUsers(topUsersData);
     }
   }, [topUsersData]);
+
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
 
   return (
     <>
@@ -137,10 +145,23 @@ function Home() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={7} marginLeft={5}>
-            {filteredBlogs &&
-              filteredBlogs.map((blog) => (
-                <BlogCard key={blog.blogId} blog={blog} />
-              ))}
+            {currentBlogs.map((blog) => (
+              <BlogCard key={blog.blogId} blog={blog} />
+            ))}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 2,
+              }}
+            >
+              <Pagination
+                count={Math.ceil(filteredBlogs.length / blogsPerPage)}
+                page={currentPage}
+                onChange={(e, page) => setCurrentPage(page)}
+                color="primary"
+              />
+            </Box>
           </Grid>
           <Grid item xs={4}>
             <TopContent

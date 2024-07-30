@@ -28,7 +28,9 @@ function BlogCard(props) {
 
   const onSubmit1 = (id) => {
     mutateAddFavouriteBlog(blog?.blogId, {
-      onSuccess: () => toast.success("Blog je dodat u omiljene!"),
+      onSuccess: () => {
+        toast.success("Blog je dodat u omiljene!");
+      },
       onError: () =>
         toast.error("Došlo je do greške prilikom dodavanja bloga u omiljene!"),
     });
@@ -36,7 +38,10 @@ function BlogCard(props) {
 
   const onSubmit = (id) => {
     mutateApprove(blog?.blogId, {
-      onSuccess: () => toast.success("Blog je odobren!"),
+      onSuccess: () => {
+        toast.success("Blog je odobren!");
+        window.location.reload();
+      },
       onError: () =>
         toast.error("Došlo je do greške prilikom odobravanja bloga!"),
     });
@@ -109,9 +114,6 @@ function BlogCard(props) {
             </Typography>
             <IconButton onClick={onSubmit1} aria-label="add to favorites">
               <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="share">
-              <ShareIcon />
             </IconButton>
           </CardContent>
           {showCheckbox && (
