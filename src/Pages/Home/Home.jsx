@@ -4,25 +4,17 @@ import Grid from "@mui/material/Grid";
 import BlogCard from "../../components/ResponsiveAppBar/BlogCard/BlogCard.jsx";
 import ResponsiveAppBar from "../../components/ResponsiveAppBar/ResponsiveAppBar.jsx";
 import TopContent from "../../components/TopContent/TopContent.jsx";
-// import { useApprovedBlogs } from "../../hooks/services/useBlog.js";
 import { useState, useEffect } from "react";
-import { List, TextField, Typography } from "@mui/material";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
+import { TextField, Typography, Select, MenuItem, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useCountries } from "../../hooks/services/useCountry";
 import { Link } from "react-router-dom";
 import { useTopFiveBlogs } from "../../hooks/services/useBlog";
 import { useTopFiveUsers } from "../../hooks/services/useAuthentication.js";
-
 import { useBlogs } from "../../hooks/services/useBlog";
 
 function Home() {
-  //   const { data: approvedBlogsData } = useApprovedBlogs();
-  // const [approvedBlogs, setApprovedBlogs] = useState();
-
   const [countries, setCountries] = useState("");
   const { data: countriesData } = useCountries();
 
@@ -34,26 +26,44 @@ function Home() {
 
   const { data: allBlogsData } = useBlogs();
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchedBlog, setSearchedBlog] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
+  const [isSearchClicked, setIsSearchClicked] = useState(false);
+
+  const filterBlogs = () => {
+    if (!allBlogsData) return;
+
+    const cleanedSearchTerm = searchTerm.trim().toLowerCase();
+    const cleanedSelectedCountry = selectedCountry.trim().toLowerCase();
+
+    const filteredByTitle = allBlogsData.filter((blog) =>
+      blog.blogTitle.toLowerCase().includes(cleanedSearchTerm)
+    );
+
+    const filteredByCountry = cleanedSelectedCountry
+      ? filteredByTitle.filter((blog) =>
+          blog.country.countryName
+            .trim()
+            .toLowerCase()
+            .includes(cleanedSelectedCountry)
+        )
+      : filteredByTitle;
+
+    setFilteredBlogs(filteredByCountry);
+  };
 
   const handleSearch = () => {
-    if (searchTerm.trim() === "") {
-      setSearchedBlog(allBlogsData);
-    } else {
-      const foundBlogs = (allBlogsData || []).filter((blog) =>
-        blog.blogTitle.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSearchedBlog(foundBlogs ? foundBlogs : []);
-    }
+    setIsSearchClicked(true);
+    filterBlogs();
   };
 
   useEffect(() => {
-    setSearchedBlog(allBlogsData);
+    if (allBlogsData) {
+      if (!isSearchClicked) {
+        setFilteredBlogs(allBlogsData);
+      }
+    }
   }, [allBlogsData]);
-
-  const handleChange = (event) => {
-    setCountries(event.target.value);
-  };
 
   useEffect(() => {
     if (topBlogsData) {
@@ -85,9 +95,9 @@ function Home() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={countries}
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
             label="Država"
-            onChange={handleChange}
             style={{ width: 300 }}
             displayEmpty
             renderValue={(selected) => {
@@ -127,8 +137,8 @@ function Home() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={7} marginLeft={5}>
-            {searchedBlog &&
-              searchedBlog?.map((blog) => (
+            {filteredBlogs &&
+              filteredBlogs.map((blog) => (
                 <BlogCard key={blog.blogId} blog={blog} />
               ))}
           </Grid>
