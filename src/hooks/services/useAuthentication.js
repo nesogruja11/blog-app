@@ -1,6 +1,13 @@
 import { QueryClient, useMutation, useQuery } from "react-query";
 import { useRequest } from "../../util/useAxios";
 
+export const getRoles = (userId) => {
+  const request = useRequest();
+  return request({
+    url: `/user/role?userId=${userId}`,
+    method: "get",
+  });
+};
 export const useUsers = () => {
   return useQuery(["users"], async () => getUsers());
 };
