@@ -8,7 +8,6 @@ import CardHeader from "@mui/material/CardHeader";
 import { red } from "@mui/material/colors";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import { useEffect, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
