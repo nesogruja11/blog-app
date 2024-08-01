@@ -1,4 +1,9 @@
-import { QueryClient, useMutation, useQuery } from "react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
 import { useRequest } from "../../util/useAxios";
 
 export const getRoles = (userId) => {
@@ -13,7 +18,7 @@ export const useUsers = () => {
 };
 
 export const useAddUser = () => {
-  const queryClient = QueryClient();
+  const queryClient = useQueryClient();
   return useMutation(addUser, {
     onSuccess: () => {
       queryClient.invalidateQueries("users");
