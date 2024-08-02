@@ -54,7 +54,7 @@ const Users = () => {
       username: "",
       password: "",
       role: "",
-      status: "active",
+      status: "",
     },
   });
 
@@ -101,7 +101,14 @@ const Users = () => {
   const onSubmit = (data) => {
     const newErrors = validateForm();
     if (Object.keys(newErrors).length === 0) {
-      mutateAdd(data, {
+      const addData = {
+        ...data,
+        roleNames: [data.role],
+        status: data.status === "active" ? true : false,
+      };
+      //   console.log(addData);
+
+      mutateAdd(addData, {
         onSuccess: () => {
           toast.success("Uspjesno ste dodali korisnika!");
           handleClose();
@@ -185,7 +192,9 @@ const Users = () => {
       </Box>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle color="#1976d2">Dodaj novog korisnika</DialogTitle>
+        <DialogTitle marginTop={3} color="#1976d2">
+          Dodaj novog korisnika
+        </DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
             <TextField

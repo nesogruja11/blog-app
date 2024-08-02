@@ -16,6 +16,7 @@ import { useApproveBlog } from "../../../hooks/services/useBlog";
 import { toast } from "react-toastify";
 import { useAddFavouriteBlog } from "../../../hooks/services/useBlog";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
 
 function BlogCard(props) {
   const [blog, setBlog] = useState();
@@ -39,7 +40,10 @@ function BlogCard(props) {
     mutateApprove(blog?.blogId, {
       onSuccess: () => {
         toast.success("Blog je odobren!");
-        window.location.reload();
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       },
       onError: () =>
         toast.error("Došlo je do greške prilikom odobravanja bloga!"),
@@ -57,6 +61,10 @@ function BlogCard(props) {
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
+
+  const formattedDate = blog?.travelDate
+    ? dayjs(blog.travelDate).format("YYYY-MM-DD")
+    : "";
 
   return (
     <>
@@ -89,14 +97,13 @@ function BlogCard(props) {
                 {blog?.blogTitle}
               </Link>
             }
-            // title={blog?.blogTitle}
             subheader={
               <>
-                {blog?.createdAt}
+                {formattedDate}
                 <br />
                 Autor: {blog?.user.username}
                 <br />
-                Država:{blog?.country?.countryName}
+                Država: {blog?.country?.countryName}
               </>
             }
           />
@@ -133,7 +140,6 @@ function BlogCard(props) {
                 <Button
                   type="submit"
                   onClick={onSubmit}
-                  //onClick={handleApproveClick}
                   sx={{
                     backgroundColor: "transparent",
                     color: "black",
@@ -142,7 +148,7 @@ function BlogCard(props) {
                     marginLeft: "auto",
                   }}
                 >
-                  Sacuvaj
+                  Sačuvaj
                 </Button>
               </Box>
             </Box>
