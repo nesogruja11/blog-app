@@ -27,7 +27,7 @@ export const useAddUser = () => {
 };
 
 export const usePutUser = () => {
-  const queryClient = queryClient();
+  const queryClient = new QueryClient();
   return useMutation(putUser, {
     onSuccess: () => {
       queryClient.invalidateQueries("users");

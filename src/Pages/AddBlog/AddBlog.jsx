@@ -18,16 +18,18 @@ import { useAddBlog } from "../../hooks/services/useBlog";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AddNewBlog = () => {
   const { data: countriesData } = useCountries();
-
   const [countries, setCountries] = useState("");
   const [date, setDate] = useState(dayjs());
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setCountries(event.target.value);
   };
+
   const {
     mutate: mutateAdd,
     isLoading: isLoadingAdd,
@@ -44,8 +46,19 @@ const AddNewBlog = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    mutateAdd(data, {
-      onSuccess: () => toast.success("Uspjesno ste dodali blog!"),
+    const formattedData = {
+      ...data,
+      travelDate: date.format("YYYY-MM-DD"),
+    };
+
+    mutateAdd(formattedData, {
+      onSuccess: () => {
+        toast.success("Uspješno ste dodali blog!");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      },
       onError: () =>
         toast.error("Došlo je do greške prilikom dodavanja bloga!"),
     });
@@ -82,7 +95,7 @@ const AddNewBlog = () => {
                 style={{ width: "100%" }}
                 placeholder="Naslov"
                 size="small"
-              ></TextField>
+              />
             </Grid>
             <Grid item xs={1}>
               <Typography>Država</Typography>
@@ -114,8 +127,8 @@ const AddNewBlog = () => {
                   <DatePicker
                     value={date}
                     onChange={(newValue) => setDate(newValue)}
-                    {...register("travelDate")}
                     label="Izaberite datum"
+                    renderInput={(params) => <TextField {...params} />}
                   />
                 </DemoContainer>
               </LocalizationProvider>
@@ -129,7 +142,7 @@ const AddNewBlog = () => {
                 style={{ width: "100%" }}
                 placeholder="link"
                 size="small"
-              ></TextField>
+              />
             </Grid>
             <Grid item xs={1}>
               Sadržaj
@@ -138,11 +151,18 @@ const AddNewBlog = () => {
               <TextareaAutosize
                 {...register("blogContent")}
                 style={{ width: 500, height: 100, marginTop: 10 }}
-              ></TextareaAutosize>{" "}
+              />
             </Grid>
-            <Grid item justifyContent={"center"} alignItems={"center"}>
+            <Grid
+              item
+              xs={2}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 10,
+              }}
+            >
               <Button
-                xs={2}
                 type="submit"
                 style={{
                   color: "black",
@@ -150,7 +170,6 @@ const AddNewBlog = () => {
                   background: "lightgray",
                   borderRadius: 10,
                   width: 100,
-                  marginLeft: 400,
                 }}
               >
                 Sačuvaj
