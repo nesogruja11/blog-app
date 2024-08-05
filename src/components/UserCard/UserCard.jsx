@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -34,32 +34,18 @@ import { useRoles } from "../../hooks/services/useRole";
 import { usePutUser } from "../../hooks/services/useAuthentication";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
 
 const UserCard = ({ user }) => {
   const [open, setOpen] = useState(false);
   const { data: rolesData } = useRoles();
   const { mutate: mutatePut } = usePutUser();
-  const { handleSubmit } = useForm();
-
-  const [formData, setFormData] = useState({
-    userId: user?.userId,
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    username: user?.username || "",
-    email: user?.email || "",
-    password: "",
-    role: user?.roleNames || "",
-    active: user?.active || "",
-  });
-
+  const { register, handleSubmit, setValue, getValues, reset, watch } =
+    useForm();
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const formatActiveStatus = (isActive) => (isActive ? "Aktivan" : "Neaktivan");
+
   const getInitial = (username) => {
     if (username) {
       return username.charAt(0).toUpperCase();
@@ -67,19 +53,43 @@ const UserCard = ({ user }) => {
     return "?"; // Ako ime korisnika nije dostupno
   };
 
-  const onSubmit = (e) => {
-    if (!formData.userId) {
-      toast.error("User ID is required.");
+  useEffect(() => {
+    if (user) {
+      setValue("userId", user.userId);
+      setValue("firstName", user.firstName || "");
+      setValue("lastName", user.lastName || "");
+      setValue("username", user.username || "");
+      setValue("email", user.email || "");
+      setValue("password", "");
+      setValue("role", user.roleNames[0] || "");
+      setValue("active", user.active ? "true" : "false");
+    }
+  }, [user, setValue]);
+
+  const onSubmit = (data) => {
+    if (!data.userId) {
+      toast.error("Neispravan ID korisnika");
       return;
     }
-    mutatePut(formData)
-      .then(() => {
-        toast.success("Korisnik je uspješno ažuriran!");
+
+    const updatedData = {
+      ...data,
+      roleNames: [data.role],
+    };
+
+    mutatePut(updatedData, {
+      onSuccess: () => {
+        toast.success("Korisnik je ažuriran");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
         handleClose();
-      })
-      .catch(() => {
-        toast.error("Došlo je do greške prilikom ažuriranja korisnika.");
-      });
+      },
+      onError: () => {
+        toast.error("Došlo je do greške prilikom ažuriranja korisnika!");
+      },
+    });
   };
 
   return (
@@ -337,8 +347,7 @@ const UserCard = ({ user }) => {
               type="text"
               fullWidth
               variant="outlined"
-              value={formData.firstName}
-              onChange={handleChange}
+              {...register("firstName")}
             />
             <TextField
               margin="dense"
@@ -347,8 +356,7 @@ const UserCard = ({ user }) => {
               type="text"
               fullWidth
               variant="outlined"
-              value={formData.lastName}
-              onChange={handleChange}
+              {...register("lastName")}
             />
             <TextField
               margin="dense"
@@ -357,8 +365,7 @@ const UserCard = ({ user }) => {
               type="text"
               fullWidth
               variant="outlined"
-              value={formData.username}
-              onChange={handleChange}
+              {...register("username")}
             />
             <TextField
               margin="dense"
@@ -367,9 +374,8 @@ const UserCard = ({ user }) => {
               type="email"
               fullWidth
               variant="outlined"
-              value={formData.email}
-              onChange={handleChange}
               autoComplete="email"
+              {...register("email")}
             />
             <TextField
               margin="dense"
@@ -378,17 +384,16 @@ const UserCard = ({ user }) => {
               type="password"
               fullWidth
               variant="outlined"
-              value={formData.password}
-              onChange={handleChange}
               autoComplete="current-password"
+              {...register("password")}
             />
             <FormControl fullWidth variant="outlined" margin="dense">
               <InputLabel>Uloga</InputLabel>
               <Select
                 name="role"
-                value={formData.role}
-                onChange={handleChange}
+                value={watch("role") || ""}
                 label="Uloga"
+                {...register("role")}
               >
                 {rolesData?.map((role) => (
                   <MenuItem
@@ -403,9 +408,9 @@ const UserCard = ({ user }) => {
             <FormControl component="fieldset" margin="dense">
               <RadioGroup
                 name="active"
-                value={formData.active}
-                onChange={handleChange}
+                value={watch("active") || "false"}
                 row
+                onChange={(event) => setValue("active", event.target.value)}
               >
                 <FormControlLabel
                   value="true"

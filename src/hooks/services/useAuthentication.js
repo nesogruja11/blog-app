@@ -62,7 +62,7 @@ const addUser = (data) => {
 
 const putUser = (data) => {
   const request = useRequest();
-  return request({ url: "/user/update", method: "put", data: data });
+  return request({ url: "/user/updateUser", method: "put", data: data });
 };
 
 const authenticate = (data) => {
