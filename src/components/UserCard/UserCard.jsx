@@ -31,15 +31,18 @@ import StarIcon from "@mui/icons-material/Star";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useRoles } from "../../hooks/services/useRole";
-import { usePutUser } from "../../hooks/services/useAuthentication";
+import {
+  useDeleteUser,
+  usePutUser,
+} from "../../hooks/services/useAuthentication";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
 
 const UserCard = ({ user }) => {
   const [open, setOpen] = useState(false);
   const { data: rolesData } = useRoles();
   const { mutate: mutatePut } = usePutUser();
+  const { mutate: mutateDelete } = useDeleteUser();
   const { register, handleSubmit, setValue, getValues, reset, watch } =
     useForm();
   const handleClickOpen = () => setOpen(true);
@@ -83,11 +86,33 @@ const UserCard = ({ user }) => {
 
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 5000);
         handleClose();
       },
       onError: () => {
         toast.error("Došlo je do greške prilikom ažuriranja korisnika!");
+      },
+    });
+  };
+
+  const onDelete = () => {
+    if (!user?.userId) {
+      toast.error("Neispravan ID korisnika");
+      return;
+    }
+    if (!user?.active) {
+      toast.error("Ne možete obrisati neaktivnog korisnika");
+      return;
+    }
+    mutateDelete(user.userId, {
+      onSuccess: () => {
+        toast.success("Korisnik je obrisan");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      },
+      onError: () => {
+        toast.error("Došlo je do greške prilikom brisanja korisnika!");
       },
     });
   };
@@ -323,7 +348,12 @@ const UserCard = ({ user }) => {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton color="error" aria-label="delete">
+                    <IconButton
+                      color="error"
+                      aria-label="delete"
+                      onClick={onDelete}
+                      disabled={!user?.active}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </Box>

@@ -35,6 +35,15 @@ export const usePutUser = () => {
   });
 };
 
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteUser, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("users");
+    },
+  });
+};
+
 export const useAuthentication = () => {
   return useMutation(authenticate);
 };
@@ -65,6 +74,14 @@ const putUser = (data) => {
   return request({ url: "/user/updateUser", method: "put", data: data });
 };
 
+const deleteUser = (id) => {
+  const request = useRequest();
+
+  return request({
+    url: `/user/deleteUser?id=${id}`,
+    method: "delete",
+  });
+};
 const authenticate = (data) => {
   const request = useRequest();
   return request({ url: "/user/login", method: "post", data: data });
