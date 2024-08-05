@@ -106,7 +106,6 @@ const Users = () => {
         roleNames: [data.role],
         status: data.status === "active" ? true : false,
       };
-      //   console.log(addData);
 
       mutateAdd(addData, {
         onSuccess: () => {
@@ -117,7 +116,7 @@ const Users = () => {
           toast.error("Došlo je do greške prilikom dodavanja korisnika!"),
       });
     } else {
-      setErrors(newErrors); // Postavljanje grešaka u stanje
+      setErrors(newErrors);
     }
   };
 

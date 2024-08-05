@@ -88,7 +88,7 @@ function Home() {
   return (
     <>
       <ResponsiveAppBar />
-      <Grid container marginLeft={5} spacing={3}>
+      <Grid container marginLeft={10} spacing={3}>
         <Grid item xs={3} marginTop={5} marginBottom={5}>
           <TextField
             id="outlined-basic"
@@ -144,7 +144,7 @@ function Home() {
       </Grid>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
-          <Grid item xs={7} marginLeft={5}>
+          <Grid item xs={7} marginLeft={10}>
             {currentBlogs.map((blog) => (
               <BlogCard key={blog.blogId} blog={blog} />
             ))}
