@@ -47,7 +47,6 @@ export default function Login() {
   const { storeToken, clearToken, token, getToken } = useAuth();
 
   useEffect(() => {
-    // console.log("Dragana");
     if (getToken()) {
       toast.error("Vaša sesija je istekla, ulogujte se ponovo!");
     }

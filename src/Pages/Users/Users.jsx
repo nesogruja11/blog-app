@@ -286,7 +286,7 @@ const Users = () => {
               <RadioGroup
                 aria-label="status"
                 name="status"
-                value={formData.status}
+                value={formData.status || ""}
                 onChange={(e) => setValue("status", e.target.value)}
               >
                 <FormControlLabel
