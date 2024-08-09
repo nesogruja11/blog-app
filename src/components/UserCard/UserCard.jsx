@@ -37,6 +37,7 @@ import {
 } from "../../hooks/services/useAuthentication";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const UserCard = ({ user }) => {
   const [open, setOpen] = useState(false);
@@ -86,7 +87,7 @@ const UserCard = ({ user }) => {
 
         setTimeout(() => {
           window.location.reload();
-        }, 5000);
+        }, 7000);
         handleClose();
       },
       onError: () => {
@@ -260,7 +261,12 @@ const UserCard = ({ user }) => {
                       alignItems: "center",
                     }}
                   >
-                    <CheckCircleIcon sx={{ mr: 1, color: "#1976d2" }} /> Status
+                    {user?.active ? (
+                      <CheckCircleIcon sx={{ mr: 1, color: "#1976d2" }} />
+                    ) : (
+                      <CancelIcon sx={{ mr: 1, color: "red" }} />
+                    )}
+                    Status
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={8}>
@@ -270,7 +276,6 @@ const UserCard = ({ user }) => {
                 </Grid>
               </Grid>
             </Grid>
-
             <Grid item xs={12}>
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={4}>

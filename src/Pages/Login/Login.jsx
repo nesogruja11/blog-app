@@ -63,7 +63,11 @@ export default function Login() {
         storeToken(response?.data?.token);
         navigate("/");
       },
-      onError: () => toast.error("Pogrešni kredencijali"),
+      onError: (error) => {
+        const errorMessage =
+          error.response?.data?.error || "Došlo je do greške";
+        toast.error(errorMessage);
+      },
     });
   };
 
