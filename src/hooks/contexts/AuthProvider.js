@@ -23,9 +23,15 @@ export function AuthProvider({ children }) {
     return token ? true : false;
   };
 
-  const clearToken = () => {
+  {
+    /*const clearToken = () => {
     localStorage.clear("token-app");
     setToken();
+  };*/
+  }
+  const clearToken = () => {
+    localStorage.removeItem("token-app");
+    setToken(null);
   };
 
   const checkIfUserIsInRole = (role) => {
@@ -48,9 +54,16 @@ export function AuthProvider({ children }) {
     return checkIfUserIsInRole(UserRoles.ADMIN);
   };
 
-  const logout = () => {
+  {
+    /*const logout = () => {
     clearToken();
     window.location.reload(true);
+  };*/
+  }
+
+  const logout = () => {
+    clearToken();
+    window.location.href = "/login";
   };
 
   const isTokenExpired = () => {

@@ -12,7 +12,8 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/contexts/AuthProvider";
 
 const pages = [
   { label: "Početna", path: "/" },
@@ -25,6 +26,8 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -39,6 +42,11 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -164,7 +172,11 @@ function ResponsiveAppBar() {
                 <MenuItem
                   key={setting}
                   onClick={() => {
-                    handleOpenUserMenu();
+                    if (setting === "Logout") {
+                      handleLogout();
+                    } else {
+                      handleCloseUserMenu();
+                    }
                   }}
                 >
                   <Typography textAlign="center">{setting}</Typography>

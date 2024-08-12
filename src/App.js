@@ -18,8 +18,8 @@ import Users from "./Pages/Users/Users";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 1000 * 60, // 5 minutes
-      cacheTime: Infinity, // do not delete stale data
+      staleTime: 5 * 1000 * 60,
+      cacheTime: Infinity,
     },
   },
 });
@@ -33,8 +33,8 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />}></Route>
-              <Route path="/add-blog" element={<AddBlog />} />
               <Route exact path="/" element={<Home />}></Route>
+              <Route path="/add-blog" element={<AddBlog />} />
               <Route path="/approve-blog" element={<ApproveBlog />} />
               <Route path="/favourite-blogs" element={<FavouriteBlogs />} />
               <Route path="/blog-details/:blogId" element={<BlogDetails />} />
