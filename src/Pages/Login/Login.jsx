@@ -15,7 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { authenticationValidationSchema } from "../../hooks/validations/authenticationValidationSchema";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuthentication } from "../../hooks/services/useAuthentication";
