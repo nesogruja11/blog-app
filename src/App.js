@@ -14,6 +14,8 @@ import ApproveBlog from "./Pages/ApproveBlog/ApproveBlog";
 import FavouriteBlogs from "./Pages/FavouriteBlogs/FavouriteBlogs";
 import BlogDetails from "./Pages/BlogDetails/BlogDetails";
 import Users from "./Pages/Users/Users";
+import PrivateRoute from "./components/PrivateRoute.js/PrivateRoute";
+import { UserRoles } from "./hooks/contexts/AuthProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,11 +36,43 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />}></Route>
               <Route exact path="/" element={<Home />}></Route>
-              <Route path="/add-blog" element={<AddBlog />} />
-              <Route path="/approve-blog" element={<ApproveBlog />} />
-              <Route path="/favourite-blogs" element={<FavouriteBlogs />} />
               <Route path="/blog-details/:blogId" element={<BlogDetails />} />
-              <Route path="/users" element={<Users />} />
+              <Route
+                path="/add-blog"
+                element={
+                  <PrivateRoute
+                    allowedRoles={[UserRoles.USER, UserRoles.ADMIN]}
+                  >
+                    <AddBlog />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/favourite-blogs"
+                element={
+                  <PrivateRoute
+                    allowedRoles={[UserRoles.USER, UserRoles.ADMIN]}
+                  >
+                    <FavouriteBlogs />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/approve-blog"
+                element={
+                  <PrivateRoute allowedRoles={[UserRoles.ADMIN]}>
+                    <ApproveBlog />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/users"
+                element={
+                  <PrivateRoute allowedRoles={[UserRoles.ADMIN]}>
+                    <Users />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
             <ToastContainer />
           </BrowserRouter>

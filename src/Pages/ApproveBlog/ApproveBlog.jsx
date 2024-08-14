@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import BlogCard from "../../components/ResponsiveAppBar/BlogCard/BlogCard";
 import ResponsiveAppBar from "../../components/ResponsiveAppBar/ResponsiveAppBar";
 import { useUnapprovedBlogs } from "../../hooks/services/useBlog";
-import { Grid, Typography, Pagination } from "@mui/material";
-
-const ITEMS_PER_PAGE = 5;
+import { Grid, Typography, Pagination, Box } from "@mui/material";
 
 const ApproveBlog = () => {
   const { data: unApprovedBlogsData } = useUnapprovedBlogs();
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Paginate unApprovedBlogsData
+  const ITEMS_PER_PAGE = 6;
   const paginatedBlogs = unApprovedBlogsData
     ? unApprovedBlogsData.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -25,32 +22,48 @@ const ApproveBlog = () => {
   return (
     <>
       <ResponsiveAppBar />
-      <Grid container marginLeft={5} spacing={3}>
-        <Grid item xs={12} sx={{ textAlign: "center", marginTop: 5 }}>
-          <Typography fontSize={40}>Odobravanje blogova</Typography>
-        </Grid>
-        <Grid item xs={12} md={10} sx={{ marginLeft: "auto", marginTop: 2 }}>
-          {paginatedBlogs.map((blog) => (
-            <BlogCard showCheckbox={true} key={blog.blogId} blog={blog} />
-          ))}
-        </Grid>
-        <Grid
-          item
-          xs={7}
-          marginLeft={40}
-          marginTop={2}
-          sx={{ display: "flex", justifyContent: "center" }}
-        >
-          <Pagination
-            count={Math.ceil(
-              (unApprovedBlogsData?.length || 0) / ITEMS_PER_PAGE
+      <Box sx={{ padding: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sx={{ textAlign: "center", marginBottom: 4 }}>
+            <Typography variant="h3" sx={{ fontWeight: "bold", color: "#333" }}>
+              Odobravanje blogova
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={10} sx={{ margin: "0 auto" }}>
+            {paginatedBlogs.length > 0 ? (
+              <Grid container spacing={3}>
+                {paginatedBlogs.map((blog) => (
+                  <Grid item xs={12} sm={6} md={4} key={blog.blogId}>
+                    <BlogCard showCheckbox={true} blog={blog} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography
+                variant="h6"
+                sx={{ textAlign: "center", color: "#555" }}
+              >
+                Nema blogova za odobriti.
+              </Typography>
             )}
-            page={currentPage}
-            onChange={handlePageChange}
-            color="primary"
-          />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}
+          >
+            <Pagination
+              count={Math.ceil(
+                (unApprovedBlogsData?.length || 0) / ITEMS_PER_PAGE
+              )}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              sx={{ "& .MuiPaginationItem-root": { borderRadius: 2 } }}
+            />
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
     </>
   );
 };

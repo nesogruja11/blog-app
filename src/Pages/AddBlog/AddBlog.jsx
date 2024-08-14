@@ -81,11 +81,22 @@ const AddNewBlog = () => {
           alignItems: "center",
         }}
       >
-        <Typography marginLeft="20px" marginTop="30px" variant="h4">
+        <Typography
+          marginLeft="20px"
+          marginTop="30px"
+          variant="h4"
+          fontSize={40}
+          marginBottom="20px"
+        >
           Novi blog
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container columns={2} rowSpacing={3} sx={{ width: "500px" }}>
+          <Grid
+            container
+            columns={2}
+            rowSpacing={3}
+            sx={{ width: "500px", fontWeight: "bold" }}
+          >
             <Grid item xs={1}>
               Naslov
             </Grid>
@@ -98,7 +109,7 @@ const AddNewBlog = () => {
               />
             </Grid>
             <Grid item xs={1}>
-              <Typography>Država</Typography>
+              <Typography fontWeight={"bold"}>Država</Typography>
             </Grid>
             <Grid item xs={1}>
               <Select
@@ -158,21 +169,21 @@ const AddNewBlog = () => {
               xs={2}
               style={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "flex-end",
                 marginTop: 10,
               }}
             >
               <Button
                 type="submit"
                 style={{
-                  color: "black",
-                  border: "black",
-                  background: "lightgray",
+                  color: "white",
+                  backgroundColor: "#1976d2",
                   borderRadius: 10,
-                  width: 100,
+                  padding: "10px 20px",
+                  textTransform: "none",
                 }}
               >
-                Sačuvaj
+                Sačuvaj blog
               </Button>
             </Grid>
           </Grid>

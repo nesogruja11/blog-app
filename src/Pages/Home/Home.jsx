@@ -88,87 +88,114 @@ function Home() {
   return (
     <>
       <ResponsiveAppBar />
-      <Grid container marginLeft={10} spacing={3}>
-        <Grid item xs={3} marginTop={5} marginBottom={5}>
-          <TextField
-            id="outlined-basic"
-            label="Pretraga po naslovu"
-            variant="outlined"
-            style={{ width: 300 }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Grid>
-        <Grid item marginTop={5} marginBottom={5} xs={3}>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selectedCountry}
-            onChange={(e) => setSelectedCountry(e.target.value)}
-            label="Država"
-            style={{ width: 300 }}
-            displayEmpty
-            renderValue={(selected) => {
-              if (!selected) {
-                return <Typography color={"grey"}>Država</Typography>;
-              }
-              return selected;
-            }}
-          >
-            {countriesData?.map((country) => (
-              <MenuItem
-                value={country.countryName}
-                key={`country-${country.countryId}`}
-              >
-                {country.countryName}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-        <Grid item marginTop={7} marginBottom={5} xs={3}>
-          <Button
-            variant="contained"
-            endIcon={<SearchIcon />}
-            onClick={handleSearch}
-          >
-            Traži
-          </Button>
-        </Grid>
-        <Grid item marginTop={7} marginBottom={5} xs={3}>
-          <Link to="/add-blog">
-            <Button variant="contained" endIcon={<AddCircleOutlineIcon />}>
-              Novi blog
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={7} marginLeft={10}>
-            {currentBlogs.map((blog) => (
-              <BlogCard key={blog.blogId} blog={blog} />
-            ))}
-            <Box
+      <Box sx={{ padding: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              id="search-title"
+              label="Pretraga po naslovu"
+              variant="outlined"
+              fullWidth
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: 2,
+                backgroundColor: "white",
+                borderRadius: 1,
+                boxShadow: 1,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Select
+              labelId="select-country"
+              id="select-country"
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              displayEmpty
+              renderValue={(selected) => {
+                if (!selected) {
+                  return <Typography color={"grey"}>Država</Typography>;
+                }
+                return selected;
+              }}
+              fullWidth
+              sx={{
+                backgroundColor: "white",
+                borderRadius: 1,
+                boxShadow: 1,
               }}
             >
-              <Pagination
-                count={Math.ceil(filteredBlogs.length / blogsPerPage)}
-                page={currentPage}
-                onChange={(e, page) => setCurrentPage(page)}
-                color="primary"
-              />
+              {countriesData?.map((country) => (
+                <MenuItem
+                  value={country.countryName}
+                  key={`country-${country.countryId}`}
+                >
+                  {country.countryName}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Button
+              variant="contained"
+              endIcon={<SearchIcon />}
+              onClick={handleSearch}
+              fullWidth
+              sx={{
+                borderRadius: 1,
+                boxShadow: 1,
+                textTransform: "none",
+              }}
+            >
+              Traži
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Link to="/add-blog">
+              <Button
+                variant="contained"
+                endIcon={<AddCircleOutlineIcon />}
+                fullWidth
+                sx={{
+                  borderRadius: 1,
+                  boxShadow: 1,
+                  textTransform: "none",
+                }}
+              >
+                Novi blog
+              </Button>
+            </Link>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} sx={{ marginTop: 3 }}>
+          <Grid item xs={12} md={8}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {currentBlogs.map((blog) => (
+                <BlogCard key={blog.blogId} blog={blog} />
+              ))}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 2,
+                }}
+              >
+                <Pagination
+                  count={Math.ceil(filteredBlogs.length / blogsPerPage)}
+                  page={currentPage}
+                  onChange={(e, page) => setCurrentPage(page)}
+                  color="primary"
+                />
+              </Box>
             </Box>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <TopContent
               title="Top autori"
               array={topFiveUsers.map(
                 (user) => `${user.firstName} ${user.lastName}`
               )}
+              sx={{ mb: 3 }}
             />
             <TopContent
               title="Top blogovi"
