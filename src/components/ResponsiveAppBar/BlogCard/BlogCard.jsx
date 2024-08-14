@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useEffect, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 import { Button } from "@mui/material";
 import { useApproveBlog } from "../../../hooks/services/useBlog";
 import { toast } from "react-toastify";
@@ -40,7 +40,6 @@ function BlogCard(props) {
     mutateApprove(blog?.blogId, {
       onSuccess: () => {
         toast.success("Blog je odobren!");
-
         setTimeout(() => {
           window.location.reload();
         }, 3000);
@@ -67,95 +66,112 @@ function BlogCard(props) {
     : "";
 
   return (
-    <>
-      <div
-        key={blog?.blogId}
-        style={{
-          marginTop: "5px",
-          marginLeft: "10px",
-        }}
-      >
-        <Card
-          sx={{ maxWidth: 1200, marginBottom: 10 }}
-          style={{ backgroundColor: "lightgrey" }}
+    <Card
+      sx={{
+        maxWidth: 1200,
+        marginBottom: 4,
+        backgroundColor: "#f9f9f9",
+        borderRadius: 2,
+        boxShadow: 3,
+        transition: "0.3s",
+        "&:hover": {
+          boxShadow: 6,
+          transform: "scale(1.02)",
+        },
+      }}
+    >
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: red[500] }}>
+            {blog?.user.username.charAt(0)}
+          </Avatar>
+        }
+        title={
+          <Link
+            to={`/blog-details/${blogId}`}
+            style={{
+              textDecoration: "none",
+              color: "#1976d2",
+              fontSize: "1.2rem",
+              fontWeight: "bold",
+            }}
+          >
+            {blog?.blogTitle}
+          </Link>
+        }
+        subheader={
+          <Typography variant="body2" color="text.secondary">
+            {formattedDate}
+            <br />
+            Autor: {blog?.user.username}
+            <br />
+            Država: {blog?.country?.countryName}
+          </Typography>
+        }
+        sx={{ padding: 2 }}
+      />
+      <CardMedia
+        component="img"
+        height="400"
+        image={blog?.coverImageUrl}
+        alt="Blog"
+        sx={{ objectFit: "cover" }}
+      />
+      <CardContent>
+        <Typography variant="body2" color="text.secondary">
+          {blog?.blogContent}
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
+          <IconButton onClick={onSubmit1} aria-label="add to favorites">
+            <FavoriteIcon />
+          </IconButton>
+        </Box>
+      </CardContent>
+      {showCheckbox && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            margin: 2,
+            borderTop: "1px solid #e0e0e0",
+            paddingTop: 2,
+          }}
         >
-          <CardHeader
-            avatar={
-              <Avatar sx={{ bgcolor: red[500] }}>
-                {blog?.user.username.charAt(0)}
-              </Avatar>
-            }
-            title={
-              <Link
-                to={`/blog-details/${blogId}`}
-                style={{
-                  textDecoration: "underline",
-                  color: "light-blue",
-                  fontSize: "20px",
-                }}
-              >
-                {blog?.blogTitle}
-              </Link>
-            }
-            subheader={
-              <>
-                {formattedDate}
-                <br />
-                Autor: {blog?.user.username}
-                <br />
-                Država: {blog?.country?.countryName}
-              </>
-            }
-          />
-          <CardMedia
-            component="img"
-            height="400"
-            image={blog?.coverImageUrl}
-            alt="Blog"
-          />
-
-          <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              {blog?.blogContent}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              marginTop: 1,
+            }}
+          >
+            <Checkbox checked={checked} onChange={handleCheckboxChange} />
+            <Typography variant="body1" color="text.primary">
+              Odobri
             </Typography>
-            <IconButton onClick={onSubmit1} aria-label="add to favorites">
-              <FavoriteIcon />
-            </IconButton>
-          </CardContent>
-          {showCheckbox && (
-            <Box
-              display="flex"
-              flexDirection="column"
-              marginRight={2}
-              marginBottom={1}
+          </Box>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", marginTop: 1 }}
+          >
+            <Button
+              type="submit"
+              onClick={onSubmit}
+              sx={{
+                backgroundColor: "#1976d2",
+                color: "white",
+                borderRadius: "20px",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#1565c0",
+                },
+              }}
             >
-              <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <Checkbox checked={checked} onChange={handleCheckboxChange} />
-                <Typography variant="body1" color="black" marginLeft={1}>
-                  Odobri
-                </Typography>
-              </Box>
-
-              <Box display="flex" justifyContent="flex-end" marginTop={1}>
-                <Button
-                  type="submit"
-                  onClick={onSubmit}
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "black",
-                    borderRadius: "10px",
-                    border: "1px solid black",
-                    marginLeft: "auto",
-                  }}
-                >
-                  Sačuvaj
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </Card>
-      </div>
-    </>
+              Sačuvaj
+            </Button>
+          </Box>
+        </Box>
+      )}
+    </Card>
   );
 }
 

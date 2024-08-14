@@ -88,12 +88,13 @@ export function AuthProvider({ children }) {
     getFullName,
     logout,
     checkIfUserIsInRole,
+    isTokenExpired,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const UserRoles = {
-  ADMIN: "ADMIN",
-  USER: "USER",
+  ADMIN: "ROLE_ADMIN",
+  USER: "ROLE_USER",
 };
