@@ -115,6 +115,9 @@ const addBlog = (data) => {
 
 const getBlogs = async () => {
   const request = useRequest();
-  const result = await request({ url: "/blog/findAll", method: "get" });
+  const result = await request({
+    url: "/blog/findAllApprovedBlogs",
+    method: "get",
+  });
   return result.data;
 };
