@@ -15,6 +15,7 @@ import { Button } from "@mui/material";
 import { useApproveBlog } from "../../../hooks/services/useBlog";
 import { toast } from "react-toastify";
 import { useAddFavouriteBlog } from "../../../hooks/services/useBlog";
+import { useRemoveFavouriteBlog } from "../../../hooks/services/useBlog";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 
@@ -24,9 +25,38 @@ function BlogCard(props) {
   const [checked, setChecked] = useState(props.blog?.approved);
   const { mutate: mutateApprove } = useApproveBlog();
   const { mutate: mutateAddFavouriteBlog } = useAddFavouriteBlog();
+  const { mutate: mutateRemoveFavouriteBlog } = useRemoveFavouriteBlog();
   const [blogId, setBlogId] = useState(null);
+  const [isFavourite, setIsFavourite] = useState(props.blog?.favourite);
 
-  const onSubmit1 = (id) => {
+  const handleFavouriteClick = () => {
+    if (isFavourite) {
+      mutateRemoveFavouriteBlog(blog?.blogId, {
+        onSuccess: () => {
+          toast.success("Blog je uklonjen iz liste omiljenih!");
+          setIsFavourite(false);
+        },
+        onError: () =>
+          toast.error(
+            "Došlo je do greške prilikom uklanjanja bloga iz liste omiljenih!"
+          ),
+      });
+    } else {
+      mutateAddFavouriteBlog(blog?.blogId, {
+        onSuccess: () => {
+          toast.success("Blog je dodat u omiljene!");
+          setIsFavourite(true);
+        },
+        onError: () =>
+          toast.error(
+            "Došlo je do greške prilikom dodavanja bloga u omiljene!"
+          ),
+      });
+    }
+  };
+
+  {
+    /*const onSubmit1 = (id) => {
     mutateAddFavouriteBlog(blog?.blogId, {
       onSuccess: () => {
         toast.success("Blog je dodat u omiljene!");
@@ -36,13 +66,23 @@ function BlogCard(props) {
     });
   };
 
+  const onSubmit2 = (id) => {
+    mutateRemoveFavouriteBlog(blog?.blogId, {
+      onSuccess: () => {
+        toast.success("Blog je uklonjen iz liste omiljenih!");
+      },
+      onError: () =>
+        toast.error(
+          "Došlo je do greške prilikom uklanjanja bloga iz liste omiljenih!"
+        ),
+    });
+  };*/
+  }
+
   const onSubmit = (id) => {
     mutateApprove(blog?.blogId, {
       onSuccess: () => {
         toast.success("Blog je odobren!");
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
       },
       onError: () =>
         toast.error("Došlo je do greške prilikom odobravanja bloga!"),
@@ -54,6 +94,7 @@ function BlogCard(props) {
       setBlog(props.blog);
       setChecked(props.blog?.approved);
       setBlogId(props.blog?.blogId);
+      setIsFavourite(props.blog?.favourite);
     }
   }, [props.blog]);
 
@@ -122,8 +163,11 @@ function BlogCard(props) {
           {blog?.blogContent}
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
-          <IconButton onClick={onSubmit1} aria-label="add to favorites">
-            <FavoriteIcon />
+          <IconButton
+            onClick={handleFavouriteClick}
+            aria-label="add to favorites"
+          >
+            <FavoriteIcon sx={{ color: isFavourite ? red[500] : "inherit" }} />
           </IconButton>
         </Box>
       </CardContent>

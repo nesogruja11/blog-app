@@ -54,7 +54,7 @@ const Users = () => {
       username: "",
       password: "",
       role: "",
-      status: "",
+      active: "",
     },
   });
 
@@ -93,7 +93,7 @@ const Users = () => {
       newErrors.password =
         "Lozinka mora imati najmanje 6 karaktera, uključujući broj, veliko i malo slovo";
     if (!formData.role) newErrors.role = "Uloga je obavezna";
-    if (!formData.status) newErrors.status = "Status je obavezan";
+    if (!formData.active) newErrors.active = "Status je obavezan";
 
     return newErrors;
   };
@@ -104,12 +104,12 @@ const Users = () => {
       const addData = {
         ...data,
         roleNames: [data.role],
-        status: data.status === "active" ? true : false,
+        active: data.active === "true" ? true : false,
       };
 
       mutateAdd(addData, {
         onSuccess: () => {
-          toast.success("Uspjesno ste dodali korisnika!");
+          toast.success("Uspješno ste dodali korisnika!");
           handleClose();
         },
         onError: () =>
@@ -285,23 +285,23 @@ const Users = () => {
               <FormLabel component="legend">Status</FormLabel>
               <RadioGroup
                 aria-label="status"
-                name="status"
-                value={formData.status || ""}
-                onChange={(e) => setValue("status", e.target.value)}
+                name="active"
+                value={formData.active || ""}
+                onChange={(e) => setValue("active", e.target.value)}
               >
                 <FormControlLabel
-                  value="active"
+                  value="true"
                   control={<Radio />}
                   label="Aktivan"
                 />
                 <FormControlLabel
-                  value="inactive"
+                  value="false"
                   control={<Radio />}
                   label="Neaktivan"
                 />
               </RadioGroup>
-              {errors.status && (
-                <FormHelperText error>{errors.status}</FormHelperText>
+              {errors.active && (
+                <FormHelperText error>{errors.active}</FormHelperText>
               )}
             </FormControl>
           </DialogContent>

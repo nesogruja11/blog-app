@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BlogCard from "../../components/ResponsiveAppBar/BlogCard/BlogCard";
 import ResponsiveAppBar from "../../components/ResponsiveAppBar/ResponsiveAppBar";
 import { useUnapprovedBlogs } from "../../hooks/services/useBlog";
@@ -6,6 +6,7 @@ import { Grid, Typography, Pagination, Box } from "@mui/material";
 
 const ApproveBlog = () => {
   const { data: unApprovedBlogsData } = useUnapprovedBlogs();
+  const [unApprovedBlogs, setUnApprovedBlogs] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6;
   const paginatedBlogs = unApprovedBlogsData
@@ -18,6 +19,13 @@ const ApproveBlog = () => {
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+    if (unApprovedBlogsData) {
+      setUnApprovedBlogs(unApprovedBlogsData);
+      console.log("aa");
+    }
+  }, [unApprovedBlogsData]);
 
   return (
     <>
@@ -53,9 +61,7 @@ const ApproveBlog = () => {
             sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}
           >
             <Pagination
-              count={Math.ceil(
-                (unApprovedBlogsData?.length || 0) / ITEMS_PER_PAGE
-              )}
+              count={Math.ceil((unApprovedBlogs?.length || 0) / ITEMS_PER_PAGE)}
               page={currentPage}
               onChange={handlePageChange}
               color="primary"

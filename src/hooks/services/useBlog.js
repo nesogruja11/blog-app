@@ -13,7 +13,7 @@ const defaultServer = DEFAULT_SERVER;
 const req = axios.create({ baseURL: defaultServer });
 
 export const useBlogs = () => {
-  return useQuery(["blogs"], async () => getBlogs());
+  return useQuery(["approved-blogs"], async () => getBlogs());
 };
 
 export const useUnapprovedBlogs = () => {
@@ -24,19 +24,29 @@ export const useFavouriteBlogs = () => {
 };
 
 export const useApproveBlog = () => {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   return useMutation(approveBlog, {
     onSuccess: () => {
       queryClient.invalidateQueries("approved-blogs");
+      queryClient.invalidateQueries("unapproved-blogs");
     },
   });
 };
 
 export const useAddFavouriteBlog = () => {
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   return useMutation(favouriteBlog, {
     onSuccess: () => {
-      queryClient.invalidateQueries("favourite-blog");
+      queryClient.invalidateQueries("favourite-blogs");
+    },
+  });
+};
+
+export const useRemoveFavouriteBlog = () => {
+  const queryClient = useQueryClient();
+  return useMutation(removeFavouriteBlog, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favourite-blogs");
     },
   });
 };
@@ -49,7 +59,7 @@ export const useAddBlog = () => {
   const queryClient = useQueryClient();
   return useMutation(addBlog, {
     onSuccess: () => {
-      queryClient.invalidateQueries("blogs");
+      queryClient.invalidateQueries("unapproved-blogs");
     },
   });
 };
@@ -96,6 +106,14 @@ const favouriteBlog = (id) => {
   return request({
     url: `/blog/saveFavouriteBlog?blogId=${id}`,
     method: "get",
+  });
+};
+
+const removeFavouriteBlog = (id) => {
+  const request = useRequest();
+  return request({
+    url: `/blog/deleteFavouriteBlog?blogId=${id}`,
+    method: "delete",
   });
 };
 

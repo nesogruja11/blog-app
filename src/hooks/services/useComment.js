@@ -1,12 +1,17 @@
 import { useRequest } from "../../util/useAxios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
-export const getComments = (blogId) => {
+export const useComments = (blogId) => {
+  return useQuery(["comments"], async () => getComments(blogId));
+};
+
+const getComments = async (blogId) => {
   const request = useRequest();
-  return request({
+  const result = await request({
     url: `/comment/findByBlog?blogId=${blogId}`,
     method: "get",
   });
+  return result?.data;
 };
 
 export const useAddComment = () => {

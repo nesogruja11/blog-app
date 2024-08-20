@@ -84,10 +84,6 @@ const UserCard = ({ user }) => {
     mutatePut(updatedData, {
       onSuccess: () => {
         toast.success("Korisnik je ažuriran");
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 7000);
         handleClose();
       },
       onError: () => {
@@ -108,9 +104,6 @@ const UserCard = ({ user }) => {
     mutateDelete(user.userId, {
       onSuccess: () => {
         toast.success("Korisnik je obrisan");
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
       },
       onError: () => {
         toast.error("Došlo je do greške prilikom brisanja korisnika!");
