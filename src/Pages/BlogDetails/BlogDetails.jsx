@@ -13,26 +13,29 @@ import {
 import { getBlog } from "../../hooks/services/useBlog";
 import { useParams } from "react-router-dom";
 import { getPictures } from "../../hooks/services/usePicture";
-import { getComments, useAddComment } from "../../hooks/services/useComment";
+import { useComments, useAddComment } from "../../hooks/services/useComment";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useAddPicture } from "../../hooks/services/usePicture";
+import { format, parseISO } from "date-fns";
 
 const BlogDetails = () => {
   const [blog, setBlog] = useState(null);
-  let { blogId } = useParams();
   const [blogTitle, setBlogTitle] = useState("");
   const [user, setUser] = useState("");
   const [dateTravel, setDateTravel] = useState("");
   const [country, setCountry] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [blogContent, setBlogContent] = useState("");
-  const [pictures, setPictures] = useState("");
-  const [comments, setComments] = useState("");
-  const { mutate: mutateAdd } = useAddComment();
-  const { handleSubmit, register, reset } = useForm();
+  const [pictures, setPictures] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+
+  let { blogId } = useParams();
+  const { data: comments } = useComments(blogId);
+  const { mutate: mutateAdd } = useAddComment();
   const { mutate: mutateAddPicture } = useAddPicture();
+
+  const { handleSubmit, register, reset } = useForm();
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -83,12 +86,7 @@ const BlogDetails = () => {
       ...data,
       blogId: blogId,
     };
-    const newComment = {
-      commentId: Math.random(),
-      commentContent: data.commentContent,
-    };
     reset();
-    setComments([...comments, newComment]);
     mutateAdd(commentData, {
       onSuccess: () => toast.success("Uspjesno ste dodali komentar!"),
       onError: () =>
@@ -113,18 +111,12 @@ const BlogDetails = () => {
   }, [blogId]);
 
   useEffect(() => {
-    if (blogId) {
-      getComments(blogId).then((result) => {
-        setComments(result.data);
-      });
-    }
-  }, [blogId]);
-
-  useEffect(() => {
     if (blog) {
       setBlogTitle(blog.blogTitle);
       setUser(blog.user.username);
-      setDateTravel(blog.travelDate);
+      setDateTravel(
+        format(parseISO(blog.travelDate.split(".")[0]), "yyyy-MM-dd HH:mm:ss")
+      );
       setCountry(blog.country.countryName);
       setCoverImage(blog.coverImageUrl);
       setBlogContent(blog.blogContent);
@@ -225,9 +217,9 @@ const BlogDetails = () => {
           </Grid>
           <Grid>
             <Grid item xs={12} marginLeft={10} width={400}>
-              <Typography fontWeight="bold">Autor:{user}</Typography>
-              <Typography fontWeight="bold">Datum:{dateTravel}</Typography>
-              <Typography fontWeight="bold">Država:{country}</Typography>
+              <Typography fontWeight="bold">Autor: {user}</Typography>
+              <Typography fontWeight="bold">Datum: {dateTravel}</Typography>
+              <Typography fontWeight="bold">Država: {country}</Typography>
             </Grid>
           </Grid>
         </div>
@@ -245,8 +237,6 @@ const BlogDetails = () => {
                   <img
                     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                    // srcSet={`${item.img}`}
-                    //src={`${item.img}`}
                     alt="Slika"
                     loading="lazy"
                   />
@@ -277,18 +267,22 @@ const BlogDetails = () => {
         </Grid>
 
         <Grid item xs={12}>
-          {comments &&
-            comments.map((comment) => (
+          {comments?.map((comment) => (
+            <div key={comment.commentId} style={{ marginBottom: "20px" }}>
               <textarea
-                key={comment.commentId}
                 style={{
                   width: "600px",
-                  height: "50px",
+                  height: "100px",
                   resize: "none",
                 }}
-                defaultValue={comment.commentContent}
-              ></textarea>
-            ))}
+                defaultValue={`${format(
+                  parseISO(comment.createdAt.split(".")[0]),
+                  "yyyy-MM-dd HH:mm:ss"
+                )}\nAutor: ${comment.username}\n\n${comment.commentContent}`}
+                readOnly
+              />
+            </div>
+          ))}
         </Grid>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid item xs={12} marginLeft={3}>

@@ -30,13 +30,7 @@ const AddNewBlog = () => {
     setCountries(event.target.value);
   };
 
-  const {
-    mutate: mutateAdd,
-    isLoading: isLoadingAdd,
-    isSuccess: isSuccessAdd,
-    isError: isErrorAdd,
-    error: errorAdd,
-  } = useAddBlog();
+  const { mutate: mutateAdd } = useAddBlog();
 
   const {
     handleSubmit,
@@ -54,13 +48,12 @@ const AddNewBlog = () => {
     mutateAdd(formattedData, {
       onSuccess: () => {
         toast.success("Uspješno ste dodali blog!");
-
         setTimeout(() => {
           navigate("/");
         }, 3000);
       },
       onError: () =>
-        toast.error("Došlo je do greške prilikom dodavanja bloga!"),
+        toast.error("Došlo je do greške prilikom dodavanja bloga !"),
     });
   };
 

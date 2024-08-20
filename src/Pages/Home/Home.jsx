@@ -16,7 +16,6 @@ import { useBlogs } from "../../hooks/services/useBlog";
 import Pagination from "@mui/material/Pagination";
 
 function Home() {
-  const [countries, setCountries] = useState("");
   const { data: countriesData } = useCountries();
 
   const { data: topBlogsData } = useTopFiveBlogs();
@@ -30,13 +29,11 @@ function Home() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [isSearchClicked, setIsSearchClicked] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [blogsPerPage] = useState(5);
 
   const filterBlogs = () => {
     if (!allBlogsData) return;
-
     const cleanedSearchTerm = searchTerm.trim().toLowerCase();
     const cleanedSelectedCountry = selectedCountry.trim().toLowerCase();
 
@@ -191,15 +188,15 @@ function Home() {
           </Grid>
           <Grid item xs={12} md={4}>
             <TopContent
+              title="Top blogovi"
+              array={topFiveBlogs.map((blog) => blog.blogTitle)}
+            />
+            <TopContent
               title="Top autori"
               array={topFiveUsers.map(
                 (user) => `${user.firstName} ${user.lastName}`
               )}
               sx={{ mb: 3 }}
-            />
-            <TopContent
-              title="Top blogovi"
-              array={topFiveBlogs.map((blog) => blog.blogTitle)}
             />
           </Grid>
         </Grid>
