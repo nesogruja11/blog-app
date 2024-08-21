@@ -25,6 +25,8 @@ import { useRoles } from "../../hooks/services/useRole";
 import { useAddUser } from "../../hooks/services/useAuthentication";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { addUserValidationSchema } from "../../hooks/validations/addUserValidationSchema";
 
 const Users = () => {
   const { data: allUsersData = [] } = useUsers();
@@ -36,16 +38,17 @@ const Users = () => {
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(users.length / usersPerPage);
   const { data: rolesData } = useRoles();
-
+  const { mutate: mutateAdd } = useAddUser();
   const [open, setOpen] = useState(false);
-  const [errors, setErrors] = useState({});
+
   const {
     handleSubmit,
     register,
     reset,
     setValue,
+    trigger,
     watch,
-    formState: { errors: formErrors },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       firstName: "",
@@ -56,8 +59,8 @@ const Users = () => {
       role: "",
       active: "",
     },
+    resolver: yupResolver(addUserValidationSchema),
   });
-
   const formData = watch();
 
   const handlePageChange = (event, value) => {
@@ -73,54 +76,22 @@ const Users = () => {
     setOpen(false);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.firstName) newErrors.firstName = "Ime je obavezno";
-    if (!formData.lastName) newErrors.lastName = "Prezime je obavezno";
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Neispravna email adresa";
-    if (!formData.username) newErrors.username = "Korisničko ime je obavezno";
-    if (formData.username.length < 6)
-      newErrors.username = "Korisničko ime mora imati najmanje 6 karaktera";
-    if (
-      !formData.password ||
-      formData.password.length < 6 ||
-      !/[A-Z]/.test(formData.password) ||
-      !/[a-z]/.test(formData.password) ||
-      !/[0-9]/.test(formData.password)
-    )
-      newErrors.password =
-        "Lozinka mora imati najmanje 6 karaktera, uključujući broj, veliko i malo slovo";
-    if (!formData.role) newErrors.role = "Uloga je obavezna";
-    if (!formData.active) newErrors.active = "Status je obavezan";
-
-    return newErrors;
-  };
-
   const onSubmit = (data) => {
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length === 0) {
-      const addData = {
-        ...data,
-        roleNames: [data.role],
-        active: data.active === "true" ? true : false,
-      };
+    const addData = {
+      ...data,
+      roleNames: [data.role],
+      active: data.active === "true" ? true : false,
+    };
 
-      mutateAdd(addData, {
-        onSuccess: () => {
-          toast.success("Uspješno ste dodali korisnika!");
-          handleClose();
-        },
-        onError: () =>
-          toast.error("Došlo je do greške prilikom dodavanja korisnika!"),
-      });
-    } else {
-      setErrors(newErrors);
-    }
+    mutateAdd(addData, {
+      onSuccess: () => {
+        toast.success("Uspješno ste dodali korisnika!");
+        handleClose();
+      },
+      onError: () =>
+        toast.error("Došlo je do greške prilikom dodavanja korisnika!"),
+    });
   };
-
-  const { mutate: mutateAdd } = useAddUser();
 
   useEffect(() => {
     if (allUsersData) {
@@ -205,9 +176,9 @@ const Users = () => {
               type="text"
               fullWidth
               variant="outlined"
-              {...register("firstName", { required: true })}
+              {...register("firstName")}
               error={!!errors.firstName}
-              helperText={errors.firstName}
+              helperText={errors.firstName?.message}
               autoComplete="given-name"
             />
             <TextField
@@ -218,9 +189,9 @@ const Users = () => {
               type="text"
               fullWidth
               variant="outlined"
-              {...register("lastName", { required: true })}
+              {...register("lastName")}
               error={!!errors.lastName}
-              helperText={errors.lastName}
+              helperText={errors.lastName?.message}
               autoComplete="family-name"
             />
             <TextField
@@ -231,9 +202,9 @@ const Users = () => {
               type="email"
               fullWidth
               variant="outlined"
-              {...register("email", { required: true })}
+              {...register("email")}
               error={!!errors.email}
-              helperText={errors.email}
+              helperText={errors.email?.message}
               autoComplete="email"
             />
             <TextField
@@ -244,9 +215,9 @@ const Users = () => {
               type="text"
               fullWidth
               variant="outlined"
-              {...register("username", { required: true })}
+              {...register("username")}
               error={!!errors.username}
-              helperText={errors.username}
+              helperText={errors.username?.message}
               autoComplete="username"
             />
             <TextField
@@ -257,9 +228,9 @@ const Users = () => {
               type="password"
               fullWidth
               variant="outlined"
-              {...register("password", { required: true })}
+              {...register("password")}
               error={!!errors.password}
-              helperText={errors.password}
+              helperText={errors.password?.message}
               autoComplete="current-password"
             />
             <TextField
@@ -271,9 +242,12 @@ const Users = () => {
               fullWidth
               variant="outlined"
               value={formData.role || ""}
-              onChange={(e) => setValue("role", e.target.value)}
+              onChange={(e) => {
+                setValue("role", e.target.value);
+                trigger("role");
+              }}
               error={!!errors.role}
-              helperText={errors.role}
+              helperText={errors.role?.message}
             >
               {rolesData?.map((role) => (
                 <MenuItem value={role.previewName} key={`role-${role.roleId}`}>
@@ -287,7 +261,10 @@ const Users = () => {
                 aria-label="status"
                 name="active"
                 value={formData.active || ""}
-                onChange={(e) => setValue("active", e.target.value)}
+                onChange={(e) => {
+                  setValue("active", e.target.value);
+                  trigger("active");
+                }}
               >
                 <FormControlLabel
                   value="true"
@@ -301,7 +278,7 @@ const Users = () => {
                 />
               </RadioGroup>
               {errors.active && (
-                <FormHelperText error>{errors.active}</FormHelperText>
+                <FormHelperText error>{errors.active?.message}</FormHelperText>
               )}
             </FormControl>
           </DialogContent>
