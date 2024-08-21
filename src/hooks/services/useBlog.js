@@ -38,6 +38,7 @@ export const useAddFavouriteBlog = () => {
   return useMutation(favouriteBlog, {
     onSuccess: () => {
       queryClient.invalidateQueries("favourite-blogs");
+      queryClient.invalidateQueries("approved-blogs");
     },
   });
 };
@@ -47,6 +48,7 @@ export const useRemoveFavouriteBlog = () => {
   return useMutation(removeFavouriteBlog, {
     onSuccess: () => {
       queryClient.invalidateQueries("favourite-blogs");
+      queryClient.invalidateQueries("approved-blogs");
     },
   });
 };

@@ -23,11 +23,12 @@ function BlogCard(props) {
   const [blog, setBlog] = useState();
   const { showCheckbox } = props;
   const [checked, setChecked] = useState(props.blog?.approved);
+  const [isFavourite, setIsFavourite] = useState(props.blog?.favourite);
   const { mutate: mutateApprove } = useApproveBlog();
   const { mutate: mutateAddFavouriteBlog } = useAddFavouriteBlog();
   const { mutate: mutateRemoveFavouriteBlog } = useRemoveFavouriteBlog();
   const [blogId, setBlogId] = useState(null);
-  const [isFavourite, setIsFavourite] = useState(props.blog?.favourite);
+  const [approved, setApproved] = useState(props.blog?.approved);
 
   const handleFavouriteClick = () => {
     if (isFavourite) {
@@ -55,34 +56,11 @@ function BlogCard(props) {
     }
   };
 
-  {
-    /*const onSubmit1 = (id) => {
-    mutateAddFavouriteBlog(blog?.blogId, {
-      onSuccess: () => {
-        toast.success("Blog je dodat u omiljene!");
-      },
-      onError: () =>
-        toast.error("Došlo je do greške prilikom dodavanja bloga u omiljene!"),
-    });
-  };
-
-  const onSubmit2 = (id) => {
-    mutateRemoveFavouriteBlog(blog?.blogId, {
-      onSuccess: () => {
-        toast.success("Blog je uklonjen iz liste omiljenih!");
-      },
-      onError: () =>
-        toast.error(
-          "Došlo je do greške prilikom uklanjanja bloga iz liste omiljenih!"
-        ),
-    });
-  };*/
-  }
-
   const onSubmit = (id) => {
     mutateApprove(blog?.blogId, {
       onSuccess: () => {
         toast.success("Blog je odobren!");
+        setApproved(true);
       },
       onError: () =>
         toast.error("Došlo je do greške prilikom odobravanja bloga!"),
@@ -95,6 +73,7 @@ function BlogCard(props) {
       setChecked(props.blog?.approved);
       setBlogId(props.blog?.blogId);
       setIsFavourite(props.blog?.favourite);
+      setApproved(props.blog?.approved);
     }
   }, [props.blog]);
 
@@ -162,14 +141,18 @@ function BlogCard(props) {
         <Typography variant="body2" color="text.secondary">
           {blog?.blogContent}
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
-          <IconButton
-            onClick={handleFavouriteClick}
-            aria-label="add to favorites"
-          >
-            <FavoriteIcon sx={{ color: isFavourite ? red[500] : "inherit" }} />
-          </IconButton>
-        </Box>
+        {approved && (
+          <Box sx={{ display: "flex", alignItems: "center", marginTop: 1 }}>
+            <IconButton
+              onClick={handleFavouriteClick}
+              aria-label="add to favorites"
+            >
+              <FavoriteIcon
+                sx={{ color: isFavourite ? red[500] : "inherit" }}
+              />
+            </IconButton>
+          </Box>
+        )}
       </CardContent>
       {showCheckbox && (
         <Box
